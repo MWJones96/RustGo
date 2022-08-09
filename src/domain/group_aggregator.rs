@@ -1,7 +1,11 @@
-use crate::domain::go_board as go_board;
-use std::collections::HashSet;
-use std::collections::HashMap;
+use super::go_board::GoBoard;
+use super::go_board::GoPlayer;
 
+use std::collections::HashSet;
+
+pub type Group = HashSet<(u32, u32)>;
+pub type BlackGroups = Vec<Group>;
+pub type WhiteGroups = Vec<Group>;
 pub struct GroupAggregator;
 
 impl GroupAggregator {
@@ -9,31 +13,32 @@ impl GroupAggregator {
         Self {}
     }
 
-    pub fn get_piece_groups(&self, board: &go_board::GoBoard) 
-        -> HashMap<go_board::GoPlayer, Vec<HashSet<(u32, u32)>>> {
-        let mut groups = HashMap::new();
+    pub fn get_piece_groups(&self, board: &GoBoard) 
+        -> (BlackGroups, WhiteGroups) {
+        let mut black_groups = BlackGroups::new();
+        let mut white_groups = WhiteGroups::new();
 
         let mut cloned_board = board.clone();
 
-        groups.insert(go_board::GoPlayer::WHITE, self.get_groups(
-            &mut cloned_board, &go_board::GoPlayer::WHITE));
-        groups.insert(go_board::GoPlayer::BLACK, self.get_groups(
-            &mut cloned_board, &go_board::GoPlayer::BLACK));
+        white_groups.append(&mut self.get_groups(
+            &mut cloned_board, &GoPlayer::WHITE));
+        black_groups.append(&mut self.get_groups(
+            &mut cloned_board, &GoPlayer::BLACK));
 
-        groups
+        (black_groups, white_groups)
     }
 
-    fn get_groups(&self, board: &mut go_board::GoBoard, player: &go_board::GoPlayer) 
-        -> Vec<HashSet<(u32, u32)>> {
+    fn get_groups(&self, board: &mut GoBoard, player: &GoPlayer) 
+        -> Vec<Group> {
         let mut groups = Vec::new();
-        for row in 0..board.get_board_state().len() as i32 {
-            for col in 0..board.get_board_state()[0].len() as i32 {
+        for row in 0..board.get_board_state().len() {
+            for col in 0..board.get_board_state()[0].len() {
                 if let Some(i) = board.get_board_state()[row as usize][col as usize] {
                     match i == player.to_owned() {
                         true => {
-                            let mut group = HashSet::new();
+                            let mut group = Group::new();
                             self.get_group(board, &player, 
-                                row, col, &mut group);
+                                row as i32, col as i32, &mut group);
     
                             groups.push(group);
                         },
@@ -46,8 +51,8 @@ impl GroupAggregator {
         groups
     }
 
-    fn get_group(&self, board: &mut go_board::GoBoard, player: &go_board::GoPlayer, 
-        row: i32, col: i32, current_group: &mut HashSet<(u32, u32)>) {
+    fn get_group(&self, board: &mut GoBoard, player: &GoPlayer, 
+        row: i32, col: i32, current_group: &mut Group) {
         if row < 0 || row >= board.get_board_state().len() as i32 
         || col < 0 || col >= board.get_board_state()[0].len() as i32 {
             return;
@@ -57,7 +62,7 @@ impl GroupAggregator {
             match i == player.to_owned() {
                 true => {
                     current_group.insert((row as u32, col as u32));
-                    board.remove(row, col);
+                    board.remove(row as u32, col as u32);
 
                     self.get_group(board, player, row + 1, col, current_group);
                     self.get_group(board, player, row - 1 , col, current_group);
@@ -77,16 +82,13 @@ mod tests {
     #[test]
     fn test_get_piece_groups_empty() {
         let group_aggregator = GroupAggregator::new();
-        let board = go_board::GoBoard::new(10);
+        let board = GoBoard::new(10);
         let old_board = board.clone();
 
         let groups = group_aggregator.get_piece_groups(&board);
 
-        assert!(groups.contains_key(&go_board::GoPlayer::BLACK));
-        assert!(groups.contains_key(&go_board::GoPlayer::WHITE));
-
-        let black_groups = groups.get(&go_board::GoPlayer::BLACK).unwrap();
-        let white_groups = groups.get(&go_board::GoPlayer::WHITE).unwrap();
+        let black_groups = groups.0;
+        let white_groups = groups.1;
 
         assert_eq!(0, black_groups.len());
         assert_eq!(0, white_groups.len());
@@ -96,10 +98,10 @@ mod tests {
 
     #[test]
     fn test_get_piece_groups_two_white_groups() {
-        let mut board = go_board::GoBoard::new(3);
+        let mut board = GoBoard::new(3);
 
-        board.place(0, 0, go_board::GoPlayer::WHITE);
-        board.place(2, 2, go_board::GoPlayer::WHITE);
+        board.place(0, 0, GoPlayer::WHITE);
+        board.place(2, 2, GoPlayer::WHITE);
 
         let old_board = board.clone();
 
@@ -110,11 +112,8 @@ mod tests {
         let group_aggregator = GroupAggregator::new();
         let groups = group_aggregator.get_piece_groups(&board);
 
-        assert!(groups.contains_key(&go_board::GoPlayer::BLACK));
-        assert!(groups.contains_key(&go_board::GoPlayer::WHITE));
-
-        let black_groups = groups.get(&go_board::GoPlayer::BLACK).unwrap();
-        let white_groups = groups.get(&go_board::GoPlayer::WHITE).unwrap();
+        let black_groups = groups.0;
+        let white_groups = groups.1;
     
         assert_eq!(0, black_groups.len());
         assert_eq!(2, white_groups.len());
@@ -127,15 +126,15 @@ mod tests {
 
     #[test]
     fn test_get_piece_groups_one_black_group() {
-        let mut board = go_board::GoBoard::new(3);
+        let mut board = GoBoard::new(3);
 
-        board.place(0, 1, go_board::GoPlayer::BLACK);
+        board.place(0, 1, GoPlayer::BLACK);
 
-        board.place(1, 0, go_board::GoPlayer::BLACK);
-        board.place(1, 1, go_board::GoPlayer::BLACK);
-        board.place(1, 2, go_board::GoPlayer::BLACK);
+        board.place(1, 0, GoPlayer::BLACK);
+        board.place(1, 1, GoPlayer::BLACK);
+        board.place(1, 2, GoPlayer::BLACK);
 
-        board.place(2, 1, go_board::GoPlayer::BLACK);
+        board.place(2, 1, GoPlayer::BLACK);
 
         let old_board = board.clone();
 
@@ -146,11 +145,8 @@ mod tests {
         let group_aggregator = GroupAggregator::new();
         let groups = group_aggregator.get_piece_groups(&board);
 
-        assert!(groups.contains_key(&go_board::GoPlayer::BLACK));
-        assert!(groups.contains_key(&go_board::GoPlayer::WHITE));
-
-        let black_groups = groups.get(&go_board::GoPlayer::BLACK).unwrap();
-        let white_groups = groups.get(&go_board::GoPlayer::WHITE).unwrap();
+        let black_groups = groups.0;
+        let white_groups = groups.1;
     
         assert_eq!(1, black_groups.len());
         assert_eq!(0, white_groups.len());
@@ -162,21 +158,21 @@ mod tests {
 
     #[test]
     fn test_get_piece_groups_black_and_white() {
-        let mut board = go_board::GoBoard::new(3);
+        let mut board = GoBoard::new(3);
 
-        board.place(0, 1, go_board::GoPlayer::BLACK);
+        board.place(0, 1, GoPlayer::BLACK);
 
-        board.place(1, 0, go_board::GoPlayer::BLACK);
-        board.place(1, 1, go_board::GoPlayer::BLACK);
-        board.place(1, 2, go_board::GoPlayer::BLACK);
+        board.place(1, 0, GoPlayer::BLACK);
+        board.place(1, 1, GoPlayer::BLACK);
+        board.place(1, 2, GoPlayer::BLACK);
 
-        board.place(2, 1, go_board::GoPlayer::BLACK);
+        board.place(2, 1, GoPlayer::BLACK);
 
-        board.place(0, 0, go_board::GoPlayer::WHITE);
-        board.place(0, 2, go_board::GoPlayer::WHITE);
+        board.place(0, 0, GoPlayer::WHITE);
+        board.place(0, 2, GoPlayer::WHITE);
 
-        board.place(2, 0, go_board::GoPlayer::WHITE);
-        board.place(2, 2, go_board::GoPlayer::WHITE);
+        board.place(2, 0, GoPlayer::WHITE);
+        board.place(2, 2, GoPlayer::WHITE);
 
         let old_board = board.clone();
 
@@ -187,11 +183,8 @@ mod tests {
         let group_aggregator = GroupAggregator::new();
         let groups = group_aggregator.get_piece_groups(&board);
 
-        assert!(groups.contains_key(&go_board::GoPlayer::BLACK));
-        assert!(groups.contains_key(&go_board::GoPlayer::WHITE));
-
-        let black_groups = groups.get(&go_board::GoPlayer::BLACK).unwrap();
-        let white_groups = groups.get(&go_board::GoPlayer::WHITE).unwrap();
+        let black_groups = groups.0;
+        let white_groups = groups.1;
 
         assert_eq!(1, black_groups.len());
         assert_eq!(4, white_groups.len());

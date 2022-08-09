@@ -1,3 +1,5 @@
+pub type GoBoardState = Vec<Vec<Option<GoPlayer>>>;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GoPlayer{
     BLACK,
@@ -6,18 +8,18 @@ pub enum GoPlayer{
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct GoBoard{
-    board_state: Vec<Vec<Option<GoPlayer>>>
+    board_state: GoBoardState
 }
 
 impl GoBoard {
-    pub fn new(size: i32) -> Self {
+    pub fn new(size: u32) -> Self {
         Self {
             board_state: 
                 vec![vec![None; size as usize]; size as usize]
         }
     }
 
-    pub fn place(&mut self, row: i32, col: i32, piece: GoPlayer) -> bool {
+    pub fn place(&mut self, row: u32, col: u32, piece: GoPlayer) -> bool {
         match self.board_state[row as usize][col as usize] {
             Some(_) => false,
             None => {
@@ -27,11 +29,11 @@ impl GoBoard {
         }
     }
 
-    pub fn remove(&mut self, row: i32, col: i32) {
+    pub fn remove(&mut self, row: u32, col: u32) {
         self.board_state[row as usize][col as usize] = None;
     }
 
-    pub fn get_board_state(&self) -> &Vec<Vec<Option<GoPlayer>>> { 
+    pub fn get_board_state(&self) -> &GoBoardState { 
         return &self.board_state; 
     }
 }
