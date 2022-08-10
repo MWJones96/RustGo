@@ -9,26 +9,22 @@ pub type WhiteGroups = Vec<Group>;
 pub struct GroupAggregator;
 
 impl GroupAggregator {
-    pub fn new() -> Self {
-        Self {}
-    }
-
-    pub fn get_piece_groups(&self, board: &GoBoard) 
-        -> (BlackGroups, WhiteGroups) {
+    pub fn get_piece_groups(board: &GoBoard) 
+            -> (BlackGroups, WhiteGroups) {
         let mut black_groups = BlackGroups::new();
         let mut white_groups = WhiteGroups::new();
 
         let mut cloned_board = board.clone();
 
-        white_groups.append(&mut self.get_groups(
+        white_groups.append(&mut Self::get_groups(
             &mut cloned_board, &GoPlayer::WHITE));
-        black_groups.append(&mut self.get_groups(
+        black_groups.append(&mut Self::get_groups(
             &mut cloned_board, &GoPlayer::BLACK));
 
         (black_groups, white_groups)
     }
 
-    fn get_groups(&self, board: &mut GoBoard, player: &GoPlayer) 
+    fn get_groups(board: &mut GoBoard, player: &GoPlayer) 
         -> Vec<Group> {
         let mut groups = Vec::new();
         for row in 0..board.get_board_state().len() {
@@ -37,7 +33,7 @@ impl GroupAggregator {
                     match i == player.to_owned() {
                         true => {
                             let mut group = Group::new();
-                            self.get_group(board, &player, 
+                            Self::get_group(board, &player, 
                                 row as i32, col as i32, &mut group);
     
                             groups.push(group);
@@ -51,7 +47,7 @@ impl GroupAggregator {
         groups
     }
 
-    fn get_group(&self, board: &mut GoBoard, player: &GoPlayer, 
+    fn get_group(board: &mut GoBoard, player: &GoPlayer, 
         row: i32, col: i32, current_group: &mut Group) {
         if row < 0 || row >= board.get_board_state().len() as i32 
         || col < 0 || col >= board.get_board_state()[0].len() as i32 {
@@ -64,10 +60,10 @@ impl GroupAggregator {
                     current_group.insert((row as u32, col as u32));
                     board.remove(row as u32, col as u32);
 
-                    self.get_group(board, player, row + 1, col, current_group);
-                    self.get_group(board, player, row - 1 , col, current_group);
-                    self.get_group(board, player, row, col + 1, current_group);
-                    self.get_group(board, player, row, col - 1, current_group);
+                    Self::get_group(board, player, row + 1, col, current_group);
+                    Self::get_group(board, player, row - 1 , col, current_group);
+                    Self::get_group(board, player, row, col + 1, current_group);
+                    Self::get_group(board, player, row, col - 1, current_group);
                 },
                 false => return,
             }
@@ -81,11 +77,10 @@ mod tests {
 
     #[test]
     fn test_get_piece_groups_empty() {
-        let group_aggregator = GroupAggregator::new();
         let board = GoBoard::new(10);
         let old_board = board.clone();
 
-        let groups = group_aggregator.get_piece_groups(&board);
+        let groups = GroupAggregator::get_piece_groups(&board);
 
         let black_groups = groups.0;
         let white_groups = groups.1;
@@ -109,8 +104,7 @@ mod tests {
         //| | | |
         //| | |O|
 
-        let group_aggregator = GroupAggregator::new();
-        let groups = group_aggregator.get_piece_groups(&board);
+        let groups = GroupAggregator::get_piece_groups(&board);
 
         let black_groups = groups.0;
         let white_groups = groups.1;
@@ -142,8 +136,7 @@ mod tests {
         //|X|X|X|
         //| |X| |
 
-        let group_aggregator = GroupAggregator::new();
-        let groups = group_aggregator.get_piece_groups(&board);
+        let groups = GroupAggregator::get_piece_groups(&board);
 
         let black_groups = groups.0;
         let white_groups = groups.1;
@@ -180,8 +173,7 @@ mod tests {
         //|X|X|X|
         //|O|X|O|
 
-        let group_aggregator = GroupAggregator::new();
-        let groups = group_aggregator.get_piece_groups(&board);
+        let groups = GroupAggregator::get_piece_groups(&board);
 
         let black_groups = groups.0;
         let white_groups = groups.1;

@@ -12,13 +12,8 @@ pub type Liberties = HashSet<(u32, u32)>;
 pub struct GroupLibertiesAggregator;
 
 impl GroupLibertiesAggregator {
-    pub fn new() -> Self {
-        Self {}
-    }
-
-    pub fn get_group_liberties(&self, board: &GoBoard, group: &Group) -> Liberties {
-        let group_aggregator = GroupAggregator::new();
-        let groups = group_aggregator.get_piece_groups(board);
+    pub fn get_group_liberties(board: &GoBoard, group: &Group) -> Liberties {
+        let groups = GroupAggregator::get_piece_groups(board);
 
         let black_groups = groups.0;
         let white_groups = groups.1;
@@ -67,13 +62,11 @@ mod tests {
         //| | | |
         //| | |O|
 
-        let group_liberties_aggregator = GroupLibertiesAggregator::new();
-
         let white_liberties_group_one = 
-            group_liberties_aggregator.get_group_liberties(
+            GroupLibertiesAggregator::get_group_liberties(
                 &board, &Group::from([(0, 0)]));
         let white_liberties_group_two = 
-            group_liberties_aggregator.get_group_liberties(
+            GroupLibertiesAggregator::get_group_liberties(
                 &board, &Group::from([(2, 2)]));
 
         assert_eq!(Liberties::from([(0, 1), (1, 0)]), white_liberties_group_one);
@@ -96,10 +89,8 @@ mod tests {
         //|X|X|X|
         //| |X| |
 
-        let group_liberties_aggregator = GroupLibertiesAggregator::new();
-
         let black_liberties = 
-            group_liberties_aggregator.get_group_liberties(
+            GroupLibertiesAggregator::get_group_liberties(
                 &board, &Group::from([(0, 1), (1, 0), (1, 1), (1, 2), (2, 1)]));
 
         assert_eq!(Liberties::from([(0, 0), (0, 2), (2, 0), (2, 2)]), black_liberties);
@@ -127,35 +118,33 @@ mod tests {
         //|X|X|X|
         //|O|X|O|
 
-        let group_liberties_aggregator = GroupLibertiesAggregator::new();
-
         let black_liberties = 
-            group_liberties_aggregator.get_group_liberties(
+            GroupLibertiesAggregator::get_group_liberties(
                 &board, &Group::from([(0, 1), (1, 0), (1, 1), (1, 2), (2, 1)]));
 
         assert_eq!(Liberties::from([]), black_liberties);
 
         let white_liberties = 
-            group_liberties_aggregator.get_group_liberties(
+            GroupLibertiesAggregator::get_group_liberties(
                 &board, &Group::from([(0, 0)]));
 
         assert_eq!(Liberties::from([]), white_liberties);
 
         let white_liberties = 
-        group_liberties_aggregator.get_group_liberties(
-            &board, &Group::from([(0, 2)]));
+            GroupLibertiesAggregator::get_group_liberties(
+                &board, &Group::from([(0, 2)]));
 
         assert_eq!(Liberties::from([]), white_liberties);
 
         let white_liberties = 
-        group_liberties_aggregator.get_group_liberties(
-            &board, &Group::from([(2, 0)]));
+            GroupLibertiesAggregator::get_group_liberties(
+                &board, &Group::from([(2, 0)]));
 
         assert_eq!(Liberties::from([]), white_liberties);
 
         let white_liberties = 
-        group_liberties_aggregator.get_group_liberties(
-            &board, &Group::from([(2, 2)]));
+            GroupLibertiesAggregator::get_group_liberties(
+                &board, &Group::from([(2, 2)]));
 
         assert_eq!(Liberties::from([]), white_liberties);
     }
@@ -164,9 +153,8 @@ mod tests {
     #[should_panic]
     fn test_panic_on_invalid_group_input() {
         let mut board = GoBoard::new(3);
-        let group_liberties_aggregator = GroupLibertiesAggregator::new();
 
-        group_liberties_aggregator.get_group_liberties(
+        GroupLibertiesAggregator::get_group_liberties(
             &board, &Group::from([(0, 0)]));
     }
 }

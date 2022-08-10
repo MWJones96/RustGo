@@ -19,13 +19,11 @@ impl GoGame {
     pub fn place(&mut self, row: u32, col: u32) -> bool {
         match self.board.place(row, col, self.current_player) {
             true => {
-                let group_aggregator = GroupAggregator::new();
-                let group_liberties_aggregator = GroupLibertiesAggregator::new();
-                let groups = group_aggregator.get_piece_groups(&self.board);
+                let groups = GroupAggregator::get_piece_groups(&self.board);
 
                 let remove_groups_with_no_liberties = |group| {
                     //Group with no remaining liberties
-                    if group_liberties_aggregator.get_group_liberties(&self.board, group).len() == 0 {
+                    if GroupLibertiesAggregator::get_group_liberties(&self.board, group).len() == 0 {
                         group.iter().for_each(|point| self.board.remove(point.0, point.1));
                     }
                 };
