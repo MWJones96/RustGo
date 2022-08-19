@@ -18,11 +18,11 @@ impl GoBoard {
         }
     }
 
-    pub fn place(&mut self, row: u32, col: u32, piece: GoPlayer) -> bool {
+    pub fn place(&mut self, row: u32, col: u32, piece: &GoPlayer) -> bool {
         match self.board_state[row as usize][col as usize] {
             Some(_) => false,
             None => {
-                self.board_state[row as usize][col as usize] = Some(piece);
+                self.board_state[row as usize][col as usize] = Some(*piece);
                 true
             }
         }
@@ -61,15 +61,15 @@ mod tests {
     fn test_place_pieces() {
         let mut board = GoBoard::new(10);
 
-        assert!(board.place(0, 0, GoPlayer::BLACK));
+        assert!(board.place(0, 0, &GoPlayer::BLACK));
 
-        assert!(!board.place(0, 0, GoPlayer::BLACK));
-        assert!(!board.place(0, 0, GoPlayer::WHITE));
+        assert!(!board.place(0, 0, &GoPlayer::BLACK));
+        assert!(!board.place(0, 0, &GoPlayer::WHITE));
 
         assert_eq!(Some(GoPlayer::BLACK), board.get_board_state()[0][0]);
 
-        assert!(board.place(5, 5, GoPlayer::BLACK));
-        assert!(board.place(9, 9, GoPlayer::WHITE));
+        assert!(board.place(5, 5, &GoPlayer::BLACK));
+        assert!(board.place(9, 9, &GoPlayer::WHITE));
 
         assert_eq!(Some(GoPlayer::BLACK), board.get_board_state()[5][5]);
         assert_eq!(Some(GoPlayer::WHITE), board.get_board_state()[9][9]);
@@ -84,7 +84,7 @@ mod tests {
         assert_eq!(None, board.get_board_state()[0][0]);
 
         assert_eq!(None, board.get_board_state()[5][5]);
-        board.place(5, 5, GoPlayer::BLACK);
+        board.place(5, 5, &GoPlayer::BLACK);
         assert_eq!(Some(GoPlayer::BLACK), board.get_board_state()[5][5]);
         board.remove(5, 5);
         assert_eq!(None, board.get_board_state()[5][5]);
@@ -94,8 +94,8 @@ mod tests {
     fn test_clear_board() {
         let mut board = GoBoard::new(10);
 
-        assert!(board.place(0, 0, GoPlayer::BLACK));
-        assert!(board.place(0, 1, GoPlayer::WHITE));
+        assert!(board.place(0, 0, &GoPlayer::BLACK));
+        assert!(board.place(0, 1, &GoPlayer::WHITE));
 
         assert_eq!(Some(GoPlayer::BLACK), board.get_board_state()[0][0]);
         assert_eq!(Some(GoPlayer::WHITE), board.get_board_state()[0][1]);

@@ -132,8 +132,8 @@ mod group_liberties_aggregator_tests {
     fn test_liberties_white_groups() {
         let mut board = GoBoard::new(3);
 
-        board.place(0, 0, GoPlayer::WHITE);
-        board.place(2, 2, GoPlayer::WHITE);
+        board.place(0, 0, &GoPlayer::WHITE);
+        board.place(2, 2, &GoPlayer::WHITE);
 
         //|O| | |
         //| | | |
@@ -161,13 +161,13 @@ mod group_liberties_aggregator_tests {
     fn test_liberties_black_group() {
         let mut board = GoBoard::new(3);
 
-        board.place(0, 1, GoPlayer::BLACK);
+        board.place(0, 1, &GoPlayer::BLACK);
 
-        board.place(1, 0, GoPlayer::BLACK);
-        board.place(1, 1, GoPlayer::BLACK);
-        board.place(1, 2, GoPlayer::BLACK);
+        board.place(1, 0, &GoPlayer::BLACK);
+        board.place(1, 1, &GoPlayer::BLACK);
+        board.place(1, 2, &GoPlayer::BLACK);
 
-        board.place(2, 1, GoPlayer::BLACK);
+        board.place(2, 1, &GoPlayer::BLACK);
 
         //| |X| |
         //|X|X|X|
@@ -195,19 +195,19 @@ mod group_liberties_aggregator_tests {
     fn test_liberties_black_and_white_groups() {
         let mut board = GoBoard::new(3);
 
-        board.place(0, 1, GoPlayer::BLACK);
+        board.place(0, 1, &GoPlayer::BLACK);
 
-        board.place(1, 0, GoPlayer::BLACK);
-        board.place(1, 1, GoPlayer::BLACK);
-        board.place(1, 2, GoPlayer::BLACK);
+        board.place(1, 0, &GoPlayer::BLACK);
+        board.place(1, 1, &GoPlayer::BLACK);
+        board.place(1, 2, &GoPlayer::BLACK);
 
-        board.place(2, 1, GoPlayer::BLACK);
+        board.place(2, 1, &GoPlayer::BLACK);
 
-        board.place(0, 0, GoPlayer::WHITE);
-        board.place(0, 2, GoPlayer::WHITE);
+        board.place(0, 0, &GoPlayer::WHITE);
+        board.place(0, 2, &GoPlayer::WHITE);
 
-        board.place(2, 0, GoPlayer::WHITE);
-        board.place(2, 2, GoPlayer::WHITE);
+        board.place(2, 0, &GoPlayer::WHITE);
+        board.place(2, 2, &GoPlayer::WHITE);
 
         //|O|X|O|
         //|X|X|X|
@@ -265,8 +265,8 @@ mod group_aggregator_tests {
     fn test_get_piece_groups_two_white_groups() {
         let mut board = GoBoard::new(3);
 
-        board.place(0, 0, GoPlayer::WHITE);
-        board.place(2, 2, GoPlayer::WHITE);
+        board.place(0, 0, &GoPlayer::WHITE);
+        board.place(2, 2, &GoPlayer::WHITE);
 
         let old_board = board.clone();
 
@@ -292,13 +292,13 @@ mod group_aggregator_tests {
     fn test_get_piece_groups_one_black_group() {
         let mut board = GoBoard::new(3);
 
-        board.place(0, 1, GoPlayer::BLACK);
+        board.place(0, 1, &GoPlayer::BLACK);
 
-        board.place(1, 0, GoPlayer::BLACK);
-        board.place(1, 1, GoPlayer::BLACK);
-        board.place(1, 2, GoPlayer::BLACK);
+        board.place(1, 0, &GoPlayer::BLACK);
+        board.place(1, 1, &GoPlayer::BLACK);
+        board.place(1, 2, &GoPlayer::BLACK);
 
-        board.place(2, 1, GoPlayer::BLACK);
+        board.place(2, 1, &GoPlayer::BLACK);
 
         let old_board = board.clone();
 
@@ -326,19 +326,19 @@ mod group_aggregator_tests {
     fn test_get_piece_groups_black_and_white() {
         let mut board = GoBoard::new(3);
 
-        board.place(0, 1, GoPlayer::BLACK);
+        board.place(0, 1, &GoPlayer::BLACK);
 
-        board.place(1, 0, GoPlayer::BLACK);
-        board.place(1, 1, GoPlayer::BLACK);
-        board.place(1, 2, GoPlayer::BLACK);
+        board.place(1, 0, &GoPlayer::BLACK);
+        board.place(1, 1, &GoPlayer::BLACK);
+        board.place(1, 2, &GoPlayer::BLACK);
 
-        board.place(2, 1, GoPlayer::BLACK);
+        board.place(2, 1, &GoPlayer::BLACK);
 
-        board.place(0, 0, GoPlayer::WHITE);
-        board.place(0, 2, GoPlayer::WHITE);
+        board.place(0, 0, &GoPlayer::WHITE);
+        board.place(0, 2, &GoPlayer::WHITE);
 
-        board.place(2, 0, GoPlayer::WHITE);
-        board.place(2, 2, GoPlayer::WHITE);
+        board.place(2, 0, &GoPlayer::WHITE);
+        board.place(2, 2, &GoPlayer::WHITE);
 
         let old_board = board.clone();
 

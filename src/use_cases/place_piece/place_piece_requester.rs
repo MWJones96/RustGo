@@ -1,5 +1,5 @@
-use super::place_piece_output::PlacePieceOutput;
+use super::{place_piece_output::PlacePieceOutput, place_piece_input::PlacePieceInput};
 
 pub trait PlacePieceRequester {
-    fn place_piece(&self, row: u32, col: u32) -> PlacePieceOutput;
+    fn place_piece(&mut self, place_piece_input: PlacePieceInput) -> PlacePieceOutput;
 }

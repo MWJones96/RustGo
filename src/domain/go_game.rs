@@ -25,7 +25,7 @@ impl GoGame {
         &self.current_player
     }
 
-    pub fn get_board(&self) -> &GoBoard {
-        &self.board
+    pub fn get_board(&mut self) -> &mut GoBoard {
+        &mut self.board
     }
 }
