@@ -1,21 +1,20 @@
 pub type GoBoardState = Vec<Vec<Option<GoPlayer>>>;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum GoPlayer{
+pub enum GoPlayer {
     BLACK,
-    WHITE
+    WHITE,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct GoBoard{
-    board_state: GoBoardState
+pub struct GoBoard {
+    board_state: GoBoardState,
 }
 
 impl GoBoard {
     pub fn new(size: u32) -> Self {
         Self {
-            board_state: 
-                vec![vec![None; size as usize]; size as usize]
+            board_state: vec![vec![None; size as usize]; size as usize],
         }
     }
 
@@ -33,9 +32,18 @@ impl GoBoard {
         self.board_state[row as usize][col as usize] = None;
     }
 
-    pub fn get_board_state(&self) -> &GoBoardState { 
-        return &self.board_state; 
+    pub fn get_board_state(&self) -> &GoBoardState {
+        return &self.board_state;
     }
+
+    pub fn clear(&mut self) {
+        for row in (0..self.board_state.len()) {
+            for col in (0..self.board_state[0].len()) {
+                self.board_state[row][col] = None;
+            }
+        }
+    }
+
 }
 
 #[cfg(test)]
@@ -65,7 +73,6 @@ mod tests {
 
         assert_eq!(Some(GoPlayer::BLACK), board.get_board_state()[5][5]);
         assert_eq!(Some(GoPlayer::WHITE), board.get_board_state()[9][9]);
-
     }
 
     #[test]
@@ -82,6 +89,23 @@ mod tests {
         board.remove(5, 5);
         assert_eq!(None, board.get_board_state()[5][5]);
     }
+
+    #[test]
+    fn test_clear_board() {
+        let mut board = GoBoard::new(10);
+
+        assert!(board.place(0, 0, GoPlayer::BLACK));
+        assert!(board.place(0, 1, GoPlayer::WHITE));
+
+        assert_eq!(Some(GoPlayer::BLACK), board.get_board_state()[0][0]);
+        assert_eq!(Some(GoPlayer::WHITE), board.get_board_state()[0][1]);
+
+        board.clear();
+
+        for row in (0..board.board_state.len()) {
+            for col in (0..board.board_state[0].len()) {
+                assert_eq!(None, board.board_state[row][col]);
+            }
+        }
+    }
 }
-
-
