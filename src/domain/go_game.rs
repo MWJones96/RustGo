@@ -9,8 +9,8 @@ use std::thread;
 
 #[derive(Clone)]
 pub struct GoGame {
-    current_player: GoPlayer,
-    board: GoBoard
+    pub current_player: GoPlayer,
+    pub board: GoBoard
 }
 
 impl GoGame {
@@ -19,13 +19,5 @@ impl GoGame {
             current_player: GoPlayer::BLACK,
             board: GoBoard::new(size)
         }
-    }
-
-    pub fn get_current_player(&self) -> &GoPlayer {
-        &self.current_player
-    }
-
-    pub fn get_board(&mut self) -> &mut GoBoard {
-        &mut self.board
     }
 }

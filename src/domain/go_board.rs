@@ -8,7 +8,7 @@ pub enum GoPlayer {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct GoBoard {
-    board_state: GoBoardState,
+    pub board_state: GoBoardState,
 }
 
 impl GoBoard {
