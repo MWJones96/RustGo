@@ -38,9 +38,9 @@ impl GroupLibertiesAggregator {
 
     fn get_groups(board: &mut GoBoard, player: &GoPlayer) -> Vec<Group> {
         let mut groups = Vec::new();
-        for row in 0..board.get_board_state().len() {
-            for col in 0..board.get_board_state()[0].len() {
-                if let Some(i) = board.get_board_state()[row as usize][col as usize] {
+        for row in 0..board.board_state.len() {
+            for col in 0..board.board_state[0].len() {
+                if let Some(i) = board.board_state[row as usize][col as usize] {
                     match i == player.to_owned() {
                         true => {
                             let mut group = Group::new();
@@ -65,14 +65,14 @@ impl GroupLibertiesAggregator {
         current_group: &mut Group,
     ) {
         if row < 0
-            || row >= board.get_board_state().len() as i32
+            || row >= board.board_state.len() as i32
             || col < 0
-            || col >= board.get_board_state()[0].len() as i32
+            || col >= board.board_state[0].len() as i32
         {
             return;
         }
 
-        if let Some(i) = board.get_board_state()[row as usize][col as usize] {
+        if let Some(i) = board.board_state[row as usize][col as usize] {
             match i == player.to_owned() {
                 true => {
                     current_group.insert((row as u32, col as u32));
@@ -100,19 +100,19 @@ impl GroupLibertiesAggregator {
                 let row = row.to_owned();
                 let col = col.to_owned();
 
-                if row > 0 && board.get_board_state()[(row - 1) as usize][col as usize].is_none() {
+                if row > 0 && board.board_state[(row - 1) as usize][col as usize].is_none() {
                     group_liberties.insert((row - 1, col));
                 }
-                if (row < (board.get_board_state().len() - 1) as u32
-                    && board.get_board_state()[(row + 1) as usize][col as usize].is_none())
+                if (row < (board.board_state.len() - 1) as u32
+                    && board.board_state[(row + 1) as usize][col as usize].is_none())
                 {
                     group_liberties.insert((row + 1, col));
                 }
-                if col > 0 && board.get_board_state()[row as usize][(col - 1) as usize].is_none() {
+                if col > 0 && board.board_state[row as usize][(col - 1) as usize].is_none() {
                     group_liberties.insert((row, col - 1));
                 }
-                if (col < (board.get_board_state()[0].len() - 1) as u32
-                    && board.get_board_state()[row as usize][(col + 1) as usize].is_none())
+                if (col < (board.board_state[0].len() - 1) as u32
+                    && board.board_state[row as usize][(col + 1) as usize].is_none())
                 {
                     group_liberties.insert((row, col + 1));
                 }
